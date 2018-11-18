@@ -1,0 +1,21 @@
+{
+  "name": "01-webinar",
+  "version": "1.0.0",
+  "description": "28/02/2018",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chance": "^1.0.16",
+    "from2-array": "0.0.4",
+    "mkdirp": "^0.5.1",
+    "request": "^2.87.0",
+    "split": "^1.0.1",
+    "through2": "^2.0.3",
+    "through2-parallel": "^0.1.3"
+  }
+}
