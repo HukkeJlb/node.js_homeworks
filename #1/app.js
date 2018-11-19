@@ -33,6 +33,7 @@ const copyFile = (file, filePath) => {
   fs.readFile(filePath, { encoding: "utf8" }, (err, data) => {
     if (err) {
       console.log("Error reading the file");
+      process.exit(1);
     }
 
     var fileExistance = fs.existsSync(destinationPath);
@@ -71,8 +72,7 @@ const generateHash = filename => {
 
 const stringSplice = string => {
   var extension = path.extname(string);
-  var extLength = extension.length;
-  var withoutExt = string.substr(0, string.length - extLength);
+  var withoutExt = path.parse(string).name;
 
   return [withoutExt, extension];
 };
