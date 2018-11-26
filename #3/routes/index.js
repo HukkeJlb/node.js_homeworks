@@ -1,16 +1,26 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const controllers = require("../controllers");
 
-router.get('/', (req, res) => {
-    res.render('./pages/index');
-})
+router.get("/", controllers.index);
 
-router.get('/login', (req, res) => {
-    res.render('./pages/login');
-})
+router.post("/", controllers.sendMail);
 
-router.get('/admin', (req, res) => {
-    res.render('./pages/admin');
-})
+router.get("/login", controllers.login);
+
+router.post("/login", controllers.auth);
+
+const isAdmin = (req, res, next) => {
+  if (req.session.isAdmin) {
+    return next();
+  }
+  res.redirect("/login");
+};
+
+router.get("/admin", isAdmin, controllers.admin);
+
+router.post("/admin/upload", controllers.createProduct);
+
+router.post("/admin/skills", controllers.updateStats);
 
 module.exports = router;

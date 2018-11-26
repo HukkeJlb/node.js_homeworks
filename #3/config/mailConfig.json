@@ -1,0 +1,14 @@
+{
+  "mail": {
+    "subject": "Сообщение с сайта",
+    "smtp": {
+      "host": "smtp.gmail.com",
+      "port": 465,
+      "secure": true,
+      "auth": {
+        "user": "nodejs112018@gmail.com",
+        "pass": "100693qw"
+      }
+    }
+  }
+}
