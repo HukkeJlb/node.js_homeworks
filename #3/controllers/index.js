@@ -8,7 +8,8 @@ const goods = db.getState().goods || [];
 const stats = db.getState().stats || [];
 
 module.exports.index = (req, res) => {
-  res.render("./pages/index", { goods, stats });
+  const loggedIn = req.session.isAdmin;
+  res.render("./pages/index", { goods, stats, loggedIn });
 };
 
 module.exports.sendMail = (req, res) => {
