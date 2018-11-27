@@ -17,7 +17,8 @@ module.exports.sendMail = (req, res) => {
       msgsemail: "Все поля нужно заполнить!",
       status: "Error",
       goods,
-      stats
+      stats,
+      anchor: "email"
     });
   }
   const transporter = nodemailer.createTransport(mailConfig.mail.smtp);
@@ -35,14 +36,16 @@ module.exports.sendMail = (req, res) => {
         msgsemail: "Что-то пошло не так...",
         status: "Error",
         goods,
-        stats
+        stats,
+        anchor: "email"
       });
     }
     res.render("./pages/index", {
       msgsemail: "Письмо успешно отправлено!",
       status: "Error",
       goods,
-      stats
+      stats,
+      anchor: "email"
     });
   });
 };
@@ -55,19 +58,20 @@ module.exports.auth = (req, res) => {
   const email = db.getState().user.email;
   const password = db.getState().user.password;
 
-  if(email === req.body.email && password === req.body.password) {
+  if (email === req.body.email && password === req.body.password) {
     req.session.isAdmin = true;
     res.redirect("/admin");
   } else {
     const msgslogin = "Неверный логин/пароль";
     res.render("./pages/login", { msgslogin });
   }
-  
 };
 
 module.exports.admin = (req, res) => {
   const stats = db.getState().stats || [];
-  res.render("./pages/admin", { stats });
+  const msgskill = req.query.msgskill;
+  const msgfile = req.query.msgfile;
+  res.render("./pages/admin", { stats, msgskill, msgfile });
 };
 
 module.exports.createProduct = (req, res) => {
@@ -108,13 +112,12 @@ module.exports.createProduct = (req, res) => {
           price: fields.price
         })
         .write();
+      return res.redirect("/admin/?msgfile=Товар добавлен");
     });
   });
-  return res.redirect("/admin/?msgfile=Товар добавлен");
 };
 
 module.exports.updateStats = (req, res) => {
-  console.log(req.body);
   db.unset("stats").write();
   db.set("stats", [
     { number: req.body.age, text: "Возраст начала занятий на скрипке" },
@@ -122,7 +125,7 @@ module.exports.updateStats = (req, res) => {
     { number: req.body.cities, text: "Максимальное число городов в туре" },
     { number: req.body.years, text: "Лет на сцене в качестве скрипача" }
   ]).write();
-  return res.redirect("/admin/");
+  return res.redirect("/admin/?msgskill=Информация обновлена");
 };
 
 const validation = (fields, files) => {

@@ -4,7 +4,7 @@
   "description": "express-homework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --ignore models/db.json app.js"
   },
   "author": "HukkeJlb",
   "license": "ISC",
