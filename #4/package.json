@@ -1,0 +1,20 @@
+{
+  "name": "Homework-4",
+  "version": "1.0.0",
+  "description": "koa-homework",
+  "main": "index.js",
+  "scripts": {},
+  "author": "HukkeJlb",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.6.2",
+    "koa-body": "^4.0.4",
+    "koa-pug": "^3.0.0-2",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.10.0",
+    "koa-static": "^5.0.0",
+    "lowdb": "^1.0.0",
+    "nodemailer": "^4.7.0",
+    "pug": "^2.0.3"
+  }
+}

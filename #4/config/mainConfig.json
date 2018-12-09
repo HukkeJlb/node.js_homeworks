@@ -1,0 +1,12 @@
+{
+    "session": {
+      "key": "homework-koa",
+      "maxAge": "session",
+      "overwrite": true,
+      "httpOnly": true,
+      "signed": false,
+      "rolling": false,
+      "renew": false
+    }
+  }
+  
