@@ -1,10 +1,10 @@
 extends ../_template
 
 block variables
-  - var title = `Error - ${error.status}`
+  - var title = `Error - ${status}`
 
 block content
-    h1 Error
-    p= status
-    p= error
+    h1= error
+    h2= status
+    h3= stack
     a(href='/') < Back to main

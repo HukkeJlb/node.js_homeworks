@@ -21,7 +21,8 @@ app.use(errorHandler);
 app.on("error", (err, ctx) => {
   ctx.render("./pages/error", {
     status: ctx.response.status,
-    error: ctx.response.message
+    error: ctx.response.message,
+    stack: err
   });
 });
 
