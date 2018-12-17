@@ -19,7 +19,10 @@ module.exports.sendMail = async ctx => {
     !ctx.request.body.email ||
     !ctx.request.body.message
   ) {
-    ctx.flash.set({ msgemail: "Все поля необходимо заполнить", anchor: '#email' });
+    ctx.flash.set({
+      msgemail: "Все поля необходимо заполнить",
+      anchor: "#email"
+    });
     return ctx.redirect("/");
   }
   const transporter = nodemailer.createTransport(mailConfig.mail.smtp);
@@ -33,11 +36,11 @@ module.exports.sendMail = async ctx => {
   };
   await transporter.sendMail(mailOptions, function(error, info) {
     if (error) {
-      ctx.flash.set({ msgemail: "Что-то пошло не так...", anchor: '#email' });
+      ctx.flash.set({ msgemail: "Что-то пошло не так...", anchor: "#email" });
       return ctx.redirect("/");
     }
   });
-  await ctx.flash.set({ msgemail: "Письмо отправлено", anchor: '#email' });
+  await ctx.flash.set({ msgemail: "Письмо отправлено", anchor: "#email" });
   ctx.redirect("/");
 };
 
@@ -93,19 +96,21 @@ module.exports.createProduct = async ctx => {
       console.error(err.message);
       return;
     }
-    let dir = fileName.substr(fileName.indexOf("/"));
-
-    db.get("goods")
-      .push({
-        photo: dir,
-        name: productName,
-        price: productPrice
-      })
-      .write();
-    ctx.flash.set({ msgfile: "Информация обновлена" });
-    ctx.status = 201;
-    ctx.redirect("/admin");
   });
+
+  const dir = fileName.substr(fileName.indexOf("/"));
+  
+  await db
+    .get("goods")
+    .push({
+      photo: dir,
+      name: productName,
+      price: productPrice
+    })
+    .write();
+  ctx.flash.set({ msgfile: "Товар добавлен" });
+  ctx.status = 201;
+  ctx.redirect("/admin");
 };
 
 module.exports.updateStats = async ctx => {
