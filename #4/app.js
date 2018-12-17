@@ -1,6 +1,7 @@
 const Koa = require("koa");
 const app = new Koa();
 const static = require("koa-static");
+const flash = require("koa-flash-simple");
 const session = require("koa-session");
 const router = require("./routes");
 const errorHandler = require("./helpers/error");
@@ -28,6 +29,7 @@ app.on("error", (err, ctx) => {
 
 app
   .use(session(config.session, app))
+  .use(flash())
   .use(router.routes())
   .use(router.allowedMethods());
 

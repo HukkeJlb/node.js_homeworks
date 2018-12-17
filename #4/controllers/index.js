@@ -6,24 +6,21 @@ const mailConfig = require("../config/mailConfig.json");
 const goods = db.getState().goods || [];
 const stats = db.getState().stats || [];
 
-module.exports.index = ctx => {
+module.exports.index = async ctx => {
   const loggedIn = ctx.session.isAdmin;
-  ctx.render("./pages/index", { goods, stats, loggedIn });
+  const msgemail = (await ctx.flash.get()) ? ctx.flash.get().msgemail : null;
+  const anchor = (await ctx.flash.get()) ? ctx.flash.get().anchor : null;
+  ctx.render("./pages/index", { goods, stats, loggedIn, msgemail, anchor });
 };
 
-module.exports.sendMail = ctx => {
+module.exports.sendMail = async ctx => {
   if (
     !ctx.request.body.name ||
     !ctx.request.body.email ||
     !ctx.request.body.message
   ) {
-    return ctx.render("./pages/index", {
-      msgsemail: "Все поля нужно заполнить!",
-      status: "Error",
-      goods,
-      stats,
-      anchor: "email"
-    });
+    ctx.flash.set({ msgemail: "Все поля необходимо заполнить", anchor: '#email' });
+    return ctx.redirect("/");
   }
   const transporter = nodemailer.createTransport(mailConfig.mail.smtp);
   const mailOptions = {
@@ -34,24 +31,14 @@ module.exports.sendMail = ctx => {
       ctx.request.body.message.trim().slice(0, 500) +
       `\n Отправлено с: <${ctx.request.body.email}>`
   };
-  transporter.sendMail(mailOptions, function(error, info) {
+  await transporter.sendMail(mailOptions, function(error, info) {
     if (error) {
-      return ctx.render("./pages/index", {
-        msgsemail: "Что-то пошло не так...",
-        status: "Error",
-        goods,
-        stats,
-        anchor: "email"
-      });
+      ctx.flash.set({ msgemail: "Что-то пошло не так...", anchor: '#email' });
+      return ctx.redirect("/");
     }
-    ctx.render("./pages/index", {
-      msgsemail: "Письмо успешно отправлено!",
-      status: "OK",
-      goods,
-      stats,
-      anchor: "email"
-    });
   });
+  await ctx.flash.set({ msgemail: "Письмо отправлено", anchor: '#email' });
+  ctx.redirect("/");
 };
 
 module.exports.login = ctx => {
@@ -74,14 +61,14 @@ module.exports.auth = ctx => {
   }
 };
 
-module.exports.admin = ctx => {
+module.exports.admin = async ctx => {
   const stats = db.getState().stats || [];
-  const msgskill = ctx.query.msgskill;
-  const msgfile = ctx.query.msgfile;
+  const msgfile = (await ctx.flash.get()) ? ctx.flash.get().msgfile : null;
+  const msgskill = (await ctx.flash.get()) ? ctx.flash.get().msgskill : null;
   ctx.render("./pages/admin", { stats, msgskill, msgfile });
 };
 
-module.exports.createProduct = ctx => {
+module.exports.createProduct = async ctx => {
   const productName = ctx.request.body.name;
   const productPrice = ctx.request.body.price;
   const uploadDir = path.join("./public", "upload");
@@ -91,7 +78,8 @@ module.exports.createProduct = ctx => {
 
   if (valid.err) {
     fs.unlinkSync(filePath);
-    return ctx.redirect(`/admin/?msgfile=${valid.status}`);
+    ctx.flash.set({ msgfile: valid.status });
+    return ctx.redirect("/admin/");
   }
 
   if (!fs.existsSync(uploadDir)) {
@@ -114,22 +102,33 @@ module.exports.createProduct = ctx => {
         price: productPrice
       })
       .write();
-    ctx.redirect("/admin/?msgfile=Товар добавлен");
+    ctx.flash.set({ msgfile: "Информация обновлена" });
+    ctx.status = 201;
+    ctx.redirect("/admin");
   });
 };
 
-module.exports.updateStats = ctx => {
+module.exports.updateStats = async ctx => {
   db.unset("stats").write();
-  db.set("stats", [
-    { number: ctx.request.body.age, text: "Возраст начала занятий на скрипке" },
-    { number: ctx.request.body.concerts, text: "Концертов отыграл" },
-    {
-      number: ctx.request.body.cities,
-      text: "Максимальное число городов в туре"
-    },
-    { number: ctx.request.body.years, text: "Лет на сцене в качестве скрипача" }
-  ]).write();
-  return ctx.redirect("/admin/?msgskill=Информация обновлена");
+  await db
+    .set("stats", [
+      {
+        number: ctx.request.body.age,
+        text: "Возраст начала занятий на скрипке"
+      },
+      { number: ctx.request.body.concerts, text: "Концертов отыграл" },
+      {
+        number: ctx.request.body.cities,
+        text: "Максимальное число городов в туре"
+      },
+      {
+        number: ctx.request.body.years,
+        text: "Лет на сцене в качестве скрипача"
+      }
+    ])
+    .write();
+  await ctx.flash.set({ msgskill: "Информация обновлена" });
+  ctx.redirect("/admin");
 };
 
 const validation = (productName, price, name, size) => {
@@ -138,7 +137,7 @@ const validation = (productName, price, name, size) => {
   }
 
   if (price === "") {
-    return { status: "Не указано цена товара!", err: true };
+    return { status: "Не указана цена товара!", err: true };
   }
 
   if (name === "" || size === 0) {
