@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
-const bCrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bCrypt = require("bcryptjs");
+const Schema = mongoose.Schema;
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   username: {
     type: String,
     required: true,
@@ -36,29 +37,29 @@ const userSchema = new mongoose.Schema({
       C: { type: Boolean, default: false },
       R: { type: Boolean, default: true },
       U: { type: Boolean, default: true },
-      D: { type: Boolean, default: false },
+      D: { type: Boolean, default: false }
     },
     news: {
       C: { type: Boolean, default: false },
       R: { type: Boolean, default: true },
       U: { type: Boolean, default: false },
-      D: { type: Boolean, default: false },
+      D: { type: Boolean, default: false }
     },
     setting: {
       C: { type: Boolean, default: false },
       R: { type: Boolean, default: false },
       U: { type: Boolean, default: false },
-      D: { type: Boolean, default: false },
+      D: { type: Boolean, default: false }
     }
   },
   access_token: {
     type: String,
-    default: ''
+    default: ""
   }
 });
 
 userSchema.methods.setPassword = function(password) {
-  this.hash = bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
+  this.password = bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
 };
 
 userSchema.methods.validPassword = function(password) {
@@ -66,7 +67,7 @@ userSchema.methods.validPassword = function(password) {
 };
 
 userSchema.methods.setToken = function(token) {
-  this.token = token;
+  this.access_token = token;
 };
 
 module.exports = mongoose.model("User", userSchema);

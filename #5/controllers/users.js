@@ -13,16 +13,15 @@ module.exports.saveNewUser = (req, res, next) => {
     } else {
       const salt = bcrypt.genSaltSync(10);
       const password = formData.password;
-      const user = new User({
-        username: formData.username,
-        surName: formData.surName,
-        firstName: formData.firstName,
-        middleName: formData.middleName,
-        password: bcrypt.hashSync(password, salt),
-        image: formData.image,
-        permissionId: uuid(),
-        access_token: uuid()
-      });
+      const user = new User();
+      user.username = formData.username;
+      user.surName = formData.surName;
+      user.firstName = formData.firstName;
+      user.middleName = formData.middleName;
+      user.password = bcrypt.hashSync(password, salt);
+      user.image = formData.image,
+      user.permissionId = uuid();
+      user.access_token = uuid();
       user
         .save()
         .then(user => {
