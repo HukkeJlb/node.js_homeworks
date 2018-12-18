@@ -4,7 +4,7 @@ const router = express.Router();
 
 const UserCtrl = require("../controllers/users");
 
-router.get("*", (req, res, next) => {
+router.get('*', async (req, res, next) =>{
     res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
 
@@ -13,5 +13,7 @@ router.get("/", function(req, res, next) {
 });
 
 router.post("/saveNewUser", UserCtrl.saveNewUser);
+
+router.post("/login", UserCtrl.login);
 
 module.exports = router;

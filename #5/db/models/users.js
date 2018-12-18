@@ -27,28 +27,32 @@ const userSchema = new mongoose.Schema({
     default: ""
   },
   permissionId: {
-    type: Number,
+    type: String,
     default: Math.random()
   },
   permission: {
     chat: {
-      C: { type: Boolean, required: true },
-      D: { type: Boolean, required: true },
-      R: { type: Boolean, required: true },
-      U: { type: Boolean, required: true }
+      C: { type: Boolean, default: false },
+      R: { type: Boolean, default: true },
+      U: { type: Boolean, default: true },
+      D: { type: Boolean, default: false },
     },
     news: {
-      C: { type: Boolean, required: true },
-      D: { type: Boolean, required: true },
-      R: { type: Boolean, required: true },
-      U: { type: Boolean, required: true }
+      C: { type: Boolean, default: false },
+      R: { type: Boolean, default: true },
+      U: { type: Boolean, default: false },
+      D: { type: Boolean, default: false },
     },
     setting: {
-      C: { type: Boolean, required: true },
-      D: { type: Boolean, required: true },
-      R: { type: Boolean, required: true },
-      U: { type: Boolean, required: true }
+      C: { type: Boolean, default: false },
+      R: { type: Boolean, default: false },
+      U: { type: Boolean, default: false },
+      D: { type: Boolean, default: false },
     }
+  },
+  access_token: {
+    type: String,
+    default: ''
   }
 });
 
