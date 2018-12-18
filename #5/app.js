@@ -47,7 +47,7 @@ app.use(
   })
 );
 
-require("./helpers/passport")(passport);
+require("./helpers/passport");
 app.use(passport.initialize());
 app.use(passport.session());
 

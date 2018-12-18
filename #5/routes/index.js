@@ -13,7 +13,8 @@ router.get("/", function(req, res, next) {
 });
 
 router.post("/saveNewUser", UserCtrl.saveNewUser);
-
 router.post("/login", UserCtrl.login);
+router.put('/updateUser/:id', UserCtrl.updateUser)
+router.delete('/deleteUser/:id', UserCtrl.deleteUser)
 
 module.exports = router;

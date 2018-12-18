@@ -1,31 +1,41 @@
-const Users = require("../db/models/users");
+const mongoose = require("mongoose");
+const User = mongoose.model("User");
+const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
-module.exports = passport => {
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
 
-  passport.deserializeUser((id, done) => {
-    Users.findById(id, (err, user) => {
+passport.deserializeUser(function(id, done) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    done(null, id);
+  } else {
+    User.findById(id, function(err, user) {
       done(err, user);
     });
-  });
+  }
+});
 
-  passport.use(
-    "local",
-    new LocalStrategy(async (username, password, done) => {
-      try {
-        const user = await Users.findOne({ username: username });
-        
-        if (user) {
-          done(null, user);
-        } else {
-          done("Пользователь не найден", false);
-        }
-      } catch (err) {
-        done(err);
-      }
-    })
-  );
-};
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "username",
+      passwordField: "password"
+    },
+    function(username, password, done) {
+      User.findOne({ username: username })
+        .then(user => {
+          console.log("user from passport", user);
+          if (!user) {
+            return done(null, false, { message: "Пользователь не найден" });
+          }
+          if (!user.validPassword(password)) {
+            return done(null, false, { message: "Неверный пароль" });
+          }
+          return done(null, user);
+        })
+        .catch(err => done(err));
+    }
+  )
+);
