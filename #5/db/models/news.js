@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+// const User = require("./users");
 
 const newsSchema = new Schema({
   userId: {
@@ -12,7 +13,16 @@ const newsSchema = new Schema({
 });
 
 newsSchema.methods.getNews = function() {
-  return this.model("news").find({});
+  return this.model("News").aggregate([
+    {
+      $lookup: {
+        from: "User",
+        localField: "userId",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+  ]);
 };
 
-module.exports = mongoose.model("news", newsSchema);
+module.exports = mongoose.model("News", newsSchema);

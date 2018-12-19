@@ -9,6 +9,7 @@ const MongoStore = require("connect-mongo")(session);
 
 const db = require("./db");
 const basicRouter = require("./routes/index");
+const apiRouter = require("./routes/api");
 
 const app = express();
 
@@ -51,8 +52,8 @@ require("./helpers/passport");
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/api", apiRouter);
 app.use("/", basicRouter);
-app.use("/api", basicRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

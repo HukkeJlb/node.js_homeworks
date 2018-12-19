@@ -6,9 +6,8 @@ module.exports.getNews = async (req, res, next) => {
   try {
     const news = new News();
     const allNews = await news.getNews();
-    console.log(allNews);
     if (allNews.length) {
-      res.status(200).json(allNews);
+      res.status(200).send(allNews);
     }
   } catch (err) {
     throw err;
