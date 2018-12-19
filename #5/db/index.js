@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const config = require('./config.json');
 require('./models/users');
+require('./models/news');
 
 // Use native promises
 mongoose.Promise = global.Promise; // es6 promise
